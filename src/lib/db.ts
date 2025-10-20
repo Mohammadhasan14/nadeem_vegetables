@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-const MONGO_URI = process.env.MONGO_URI as string;
+const MONGODB_URI = process.env.MONGODB_URI as string;
 
-if (!MONGO_URI) {
+if (!MONGODB_URI) {
     throw Error("MongoDB URI not found in .env!")
 }
 
@@ -11,7 +11,7 @@ let isConnected = false;
 export const connectDB = async () => {
     if (isConnected) return;
     try {
-        await mongoose.connect(MONGO_URI)
+        await mongoose.connect(MONGODB_URI)
         isConnected = true;
         console.log("mongodb connected successfully!")
     } catch (error) {

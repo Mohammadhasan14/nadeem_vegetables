@@ -5,10 +5,28 @@ import { useState } from "react";
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(form);
-  };
+  const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Login failed");
+    }
+    alert("Login successful!");
+    window.location.href = "/dashboard";
+  } catch (error: any) {
+    alert(error.message);
+  }
+};
+
 
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row">

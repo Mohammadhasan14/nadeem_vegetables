@@ -3,12 +3,29 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function SignupPage() {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ fullName: "", email: "", password: "" });
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(form);
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Signup failed");
+
+      alert("Signup successful!");
+      window.location.href = "/dashboard";
+    } catch (error: any) {
+      alert(error.message);
+    }
   };
+
 
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row">
@@ -24,7 +41,7 @@ export default function SignupPage() {
             Admin Portal
           </h1>
           <p className="text-lg lg:text-xl text-slate-300 max-w-md">
-            Manage staff, monitor sales, and oversee inventory with advanced admin tools.  
+            Manage staff, monitor sales, and oversee inventory with advanced admin tools.
             Secure, fast, and built for operational excellence.
           </p>
         </div>
@@ -44,8 +61,8 @@ export default function SignupPage() {
               <input
                 type="text"
                 required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                value={form.fullName}
+                onChange={(e) => setForm({ ...form, fullName: e.target.value })}
                 placeholder="Admin Name"
                 className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 dark:bg-slate-800 dark:text-white placeholder:text-slate-400"
               />
