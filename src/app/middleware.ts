@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
-
+  console.log("token", token)
   // public routes
   if (pathname.startsWith("/login") || pathname.startsWith("/signup")) {
     if (token) return NextResponse.redirect(new URL("/dashboard", req.url));

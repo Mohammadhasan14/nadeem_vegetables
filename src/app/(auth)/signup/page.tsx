@@ -1,13 +1,15 @@
 'use client';
+import Loader from "@/app/components/ui/Loader";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function SignupPage() {
   const [form, setForm] = useState({ fullName: "", email: "", password: "" });
+  const [isSubmitting, setSubmitting] = useState(false)
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setSubmitting(true)
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
@@ -19,10 +21,12 @@ export default function SignupPage() {
 
       if (!res.ok) throw new Error(data.error || "Signup failed");
 
-      alert("Signup successful!");
+      console.log("Signup successful!");
       window.location.href = "/dashboard";
     } catch (error: any) {
       alert(error.message);
+    } finally {
+      setSubmitting(false)
     }
   };
 
@@ -97,10 +101,13 @@ export default function SignupPage() {
             </div>
 
             <button
+              disabled={isSubmitting}
               type="submit"
-              className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className={`w-full py-2 ${isSubmitting ? "opacity-50" : ""} bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer`}
             >
-              Register
+              {isSubmitting ?
+                <div className="flex justify-center items-center"><Loader width="w-6 " height="h-6" /></div>
+                : "Register"}
             </button>
           </form>
 

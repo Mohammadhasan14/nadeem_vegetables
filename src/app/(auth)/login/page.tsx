@@ -1,31 +1,36 @@
 'use client';
+import Loader from "@/app/components/ui/Loader";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
+  const [isSubmitting, setSubmitting] = useState(false)
+
 
   const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
+    setSubmitting(true)
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-  try {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+      const data = await res.json();
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Login failed");
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+      console.log("Login successful!");
+      window.location.href = "/dashboard";
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setSubmitting(false)
     }
-    alert("Login successful!");
-    window.location.href = "/dashboard";
-  } catch (error: any) {
-    alert(error.message);
-  }
-};
+  };
 
 
   return (
@@ -42,7 +47,7 @@ export default function LoginPage() {
             Admin Portal
           </h1>
           <p className="text-lg lg:text-xl text-slate-300 max-w-md">
-            Manage staff, monitor sales, and oversee inventory with advanced admin tools.  
+            Manage staff, monitor sales, and oversee inventory with advanced admin tools.
             Secure, fast, and built for operational excellence.
           </p>
         </div>
@@ -84,10 +89,13 @@ export default function LoginPage() {
             </div>
 
             <button
+              disabled={isSubmitting}
               type="submit"
-              className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className={`w-full py-2 ${isSubmitting ? "opacity-50" : ""} bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer`}
             >
-              Log In
+              {isSubmitting ?
+                <div className="flex justify-center items-center"><Loader width="w-6 " height="h-6" /></div>
+                : "Log In"}
             </button>
           </form>
 
