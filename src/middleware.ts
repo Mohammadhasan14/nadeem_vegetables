@@ -5,23 +5,29 @@ import jwt from "jsonwebtoken";
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
-  console.log("token", token)
-  // public routes
+  console.log("token======>", token);
+
+  // public routes: /login, /signup
   if (pathname.startsWith("/login") || pathname.startsWith("/signup")) {
     if (token) return NextResponse.redirect(new URL("/dashboard", req.url));
     return NextResponse.next();
   }
 
-  // protected routes
+  // protected routes: /dashboard
   if (!token && pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // verifying token
   try {
     jwt.verify(token!, process.env.JWT_SECRET!);
     return NextResponse.next();
   } catch {
-    return NextResponse.redirect(new URL("/login", req.url));
+    const res = NextResponse.redirect(new URL("/login", req.url));
+    res.cookies.set("token", "", { maxAge: 0, path: "/" });
+    return res;
   }
 }
+
+export const config = {
+  matcher: ["/login", "/signup", "/dashboard/:path*"],
+};
