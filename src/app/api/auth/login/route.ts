@@ -27,7 +27,14 @@ export async function POST(req: Request) {
     );
 
     const response = NextResponse.json({ message: "Login successful" });
-    response.cookies.set("token", token, { httpOnly: true, path: "/" });
+    response.cookies.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
 
     return response;
   } catch (error) {
@@ -35,4 +42,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
-

@@ -1,7 +1,13 @@
+"use client";
+
+import { SummaryCards } from "@/app/components/dashboard/SummaryCards";
+import { RecentPurchases } from "@/app/components/dashboard/RecentPurchases";
+
 export default function DashboardPage() {
   return (
-    <div className="h-screen flex items-center justify-center">
-      <h1 className="text-3xl font-bold">Welcome to the Dashboard 🎉</h1>
+    <div className="space-y-10">
+      <SummaryCards />
+      <RecentPurchases />
     </div>
   );
 }

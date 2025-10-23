@@ -1,11 +1,13 @@
 'use client';
 import Loader from "@/app/components/ui/Loader";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [isSubmitting, setSubmitting] = useState(false)
+  const router = useRouter();
 
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -24,7 +26,7 @@ export default function LoginPage() {
         throw new Error(data.error || "Login failed");
       }
       console.log("Login successful!");
-      window.location.href = "/dashboard";
+      router.push("/dashboard");
     } catch (error: any) {
       alert(error.message);
     } finally {
